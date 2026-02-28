@@ -1,6 +1,6 @@
 const NEEDLE_TRANSFORM_TRANSLATE = "translate(-50%, -82.5%)";
 
-// Calibrated for the 0-30 A ammeters and 0-410 V voltmeters used in this lab.
+// Calibrated for the 0-30 A ammeters and 0-420 V voltmeters used in this lab.
 const AMMETER_MIN_ANGLE = -69;
 const AMMETER_MID_ANGLE = 0;
 const AMMETER_MAX_ANGLE = 91.4;
@@ -39,11 +39,11 @@ function currentToAngle(currentValue) {
 }
 
 function voltageToAngle(voltageValue) {
-  // Voltmeter artwork: 0-410 V with 180 at top center (compressed right span).
+  // Voltmeter artwork: 0-420 V with 180 at top center.
   return valueToMeterAngle(voltageValue, {
     minValue: 0,
     midValue: 180,
-    maxValue: 410,
+    maxValue: 420,
     minAngle: VOLTMETER_MIN_ANGLE,
     midAngle: VOLTMETER_MID_ANGLE,
     maxAngle: VOLTMETER_MAX_ANGLE
@@ -116,6 +116,9 @@ document.addEventListener("keydown", (e) => {
   const voltmeter1Readings = voltageReadings;
   const ammeter2Readings = currentReadings;
   const voltmeter2Readings = voltageReadings;
+  // Ammeter face is 0-30. For the given current list (0.16..0.30 A),
+  // use dial-equivalent values (16..30) to place the needle on the shown ticks.
+  const ammeterNeedleReadings = currentReadings.map((value) => (Number(value) || 0) * 100);
 
   const ammeter1ManualAngles = [];
   const ammeter2ManualAngles = [];
@@ -312,11 +315,11 @@ document.addEventListener("keydown", (e) => {
 
     setNeedleRotation(
       needle1,
-      resolveAngle(ammeter1ManualAngles, safeIdx, currentToAngle(ammeter1Readings[safeIdx]))
+      resolveAngle(ammeter1ManualAngles, safeIdx, currentToAngle(ammeterNeedleReadings[safeIdx]))
     );
     setNeedleRotation(
       needle2,
-      resolveAngle(ammeter2ManualAngles, safeIdx, currentToAngle(ammeter2Readings[safeIdx]))
+      resolveAngle(ammeter2ManualAngles, safeIdx, currentToAngle(ammeterNeedleReadings[safeIdx]))
     );
     setNeedleRotation(
       needle3,
