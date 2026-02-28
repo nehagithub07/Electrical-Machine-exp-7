@@ -84,7 +84,7 @@ body {
 
 .top-row {
   display: grid;
-  grid-template-columns: 1fr 2.45fr 1.05fr;
+  grid-template-columns: 1fr 2.35fr 1.15fr;
   gap: 0;
   padding-bottom: clamp(120px, 1.5vw, 10px);
   position: relative;
@@ -94,7 +94,7 @@ body {
 .left-column {
   padding: clamp(8px, 1.2vw, 12px);
   border-right: 3px solid var(--ink);
-  width: 100%;
+  width:85%;
   max-width: 100%;
   min-height: 120%;
   height: 100%;
@@ -160,7 +160,7 @@ h3 {
 }
 
 .mcb-toggle {
-  width: 100%;
+  width: 80%;
   height: 160px;
   display: block;
 }
@@ -704,7 +704,7 @@ h3 {
 .workspace {
   position: absolute;
   top: 350px;
-  left: 50px;
+  left: 20px;
   right: auto;
   width: fit-content;
   max-width: calc(100% - clamp(8px, 1.5vw, 20px));
@@ -993,7 +993,7 @@ h3 {
 .observation-floating {
   position: absolute;
   top: 250px;
-  right: -120px;
+  right: -20px;
   transform: translateX(calc(100% + clamp(8px, 2vw, 16px)));
   width: clamp(220px, 22vw, 340px);
   min-width: 0;
@@ -1065,14 +1065,14 @@ h3 {
 
 .graph-actions {
   position: relative;
-  top: 340px;
-  left: 900px;
+  top: 330px;
+  left: 740px;
   display: flex;
   align-items: center;
   gap: 10px;
   flex-wrap: nowrap;
 
-  transform: scale(0.6);
+  transform: scale(0.75);
   transform-origin: top left;
   width: max-content;
 }
@@ -1906,14 +1906,16 @@ body.is-modal-open {
 
 #pill-stack {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(3, 42px);
+  grid-template-columns: repeat(2, 150px);
+  grid-template-rows: repeat(3, 52px);
   gap: 10px;
-  width: 100%;
-  max-width: 420px;
-  min-width: 280px;
+  width: max-content;
+  max-width: 100%;
+  min-width: 0;
   height: auto;
   margin-top: 14px;
+  position: relative;
+  left: 30px;
  
 }
 
@@ -1935,11 +1937,11 @@ body.is-modal-open {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5em;
+  gap: 10px;
   background-image: linear-gradient(135deg, #1f242b 0%, #151a20 45%, #0c1015 100%);
   background-size: 200% 200%;
-  width: 100%;
-  height: 100%;
+  width: 150px;
+  height: 52px;
   padding: 0 10px;
   text-align: center;
   white-space: nowrap;
@@ -1968,7 +1970,7 @@ body.is-modal-open {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 0 15px;
+  padding: 0 10px;
   width: 100%;
   height: 100%;
   border-radius: 999px;
@@ -2127,9 +2129,9 @@ body.is-modal-open {
   gap: 10px;
   color: #e6ecf2;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 0 14px;
+  padding: 0 10px;
   border-radius: 50px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: 0.02em;
   cursor: pointer;
@@ -2143,8 +2145,8 @@ body.is-modal-open {
   flex-shrink: 0;
   background-image: linear-gradient(135deg, #1f242b 0%, #151a20 45%, #0c1015 100%);
   background-size: 200% 200%;
-  width: 170px;
-  height: 60px;
+  width: 150px;
+  height: 52px;
   text-align: center;
   white-space: nowrap;
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
