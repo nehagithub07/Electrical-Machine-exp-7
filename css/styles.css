@@ -214,141 +214,27 @@ h3 {
 /* =========================
    LAMP BOARD
 ========================= */
-.lamp-board {
+.rheostat {
   position: relative;
-  top: 4px;
+  top: 130px;
   width: 100%;
   max-width: 290px;
   height: 380px;
   left: -8px;
 
-  /* Removed fixed height: let aspect-ratio control for responsiveness */
-  aspect-ratio: 4 / 3;
-  padding: clamp(12px, 1.8vw, 18px);
-  background-image: url(../images/wooden-texture.jpg);
-  background-size: cover;
-  background-position: center;
-  border: 4px solid var(--wood-border);
-  border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: clamp(8px, 1.2vw, 12px);
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.12), 0 6px 14px rgba(0, 0, 0, 0.18);
-  overflow: visible;
-  margin-left: auto;
-  margin-right: auto;
 }
-
-.lamp-grid {
-  width: 120%;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(12px, 2vw, 18px);
-  justify-items: center;
-  align-items: center;
-}
-
-.lamp-bulb {
-  /* Slightly reduced sizes for better fit */
-  width: clamp(170px, 10vw, 220px);
-  height: 80px;
-  justify-self: center;
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.25));
-  border-radius: 12px;
-}
-
-.lamp-grid .lamp-bulb:nth-child(9) {
-  grid-column: 2;
-}
-
-.lamp-grid .lamp-bulb:nth-child(10) {
-  grid-column: 3;
-}
-
-
-
-/* Dropdown styling to match the warm, tactile theme */
-.lampboard-dropdown {
-  width: 100%;
-  max-width: 300px;
-  margin: 0px 0px 1px -12px;
-  padding: 2px;
-  background: linear-gradient(180deg, #f6eedc, #e8dcc6);
-  border: 2px solid rgba(17, 17, 17, 0.25);
-  border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.7);
-}
-
-.lampboard-dropdown select {
-  width: 100%;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  padding: 10px 38px 10px 14px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: #2f241a;
-  background: linear-gradient(135deg, #fdf7e7, #e4d5bd 55%, #ccb899);
-  border: 2px solid rgba(40, 32, 24, 0.35);
-  border-radius: 8px;
-  box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.6),
-    inset 0 -3px 8px rgba(0, 0, 0, 0.08),
-    0 6px 14px rgba(0, 0, 0, 0.15);
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
-  background-image:
-    linear-gradient(45deg, transparent 50%, #6a543e 50%),
-    linear-gradient(135deg, #6a543e 50%, transparent 50%);
-  background-position:
-    calc(100% - 18px) calc(50% - 3px),
-    calc(100% - 12px) calc(50% - 3px);
-  background-size: 8px 8px;
-  background-repeat: no-repeat;
-}
-
-.lampboard-dropdown select:hover {
-  transform: translateY(-1px);
-  box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.7),
-    inset 0 -3px 8px rgba(0, 0, 0, 0.1),
-    0 10px 18px rgba(0, 0, 0, 0.18);
-  filter: saturate(1.03);
-}
-
-.lampboard-dropdown select:focus {
-  outline: 2px solid #b08452;
-
-}
-
-.lampboard-dropdown select option {
-  color: #2f241a;
-  font-weight: 600;
-  padding: 10px 14px;
-  background: linear-gradient(180deg, #fff7e5, #e3d2b8 60%, #ceb896);
-  border-bottom: 1px solid rgba(17, 17, 17, 0.15);
-}
-
-.lampboard-dropdown select option:checked {
-  background: linear-gradient(180deg, #f0dfbf, #d5c09a);
-}
-
-.lampboard-dropdown select option:hover {
-  background: linear-gradient(180deg, #ffeec7, #e6cda1);
-}
-
-
+ 
 .meter-area {
   position: relative;
-  left: -200px;
-  width: min(200px, 100%);
+  left: 0;
+  width: min(100%, 760px);
   margin: 0 auto;
 }
 
 .meter-panel {
-  width: 45%;
-  aspect-ratio: 900 / 230;
-  min-height: clamp(250px, 25vw, 270px);
-  /* Reduced min-height for better vertical fit */
+  width: 100%;
+ 
+  min-height: clamp(250px, 25vw, 300px);
   height: auto;
   background-image: url(../images/wooden-texture.jpg);
   background-size: cover;
@@ -365,18 +251,16 @@ h3 {
 .meters {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(4, minmax(140px, 1fr));
-  /* Reduced min for better horizontal fit */
+  grid-template-columns: repeat(2, minmax(150px, 1fr));
   grid-template-rows: auto auto;
-  column-gap: clamp(12px, 1.6vw, 18px);
-  row-gap: clamp(12px, 2vw, 18px);
+  column-gap: clamp(12px, 2vw, 24px);
+  row-gap: clamp(10px, 1.6vw, 16px);
   width: 100%;
   height: 100%;
   align-items: start;
   justify-items: center;
-  padding-inline: clamp(4px, 1vw, 10px);
-  overflow-x: hidden;
-  /* Ensure no X overflow */
+  padding-inline: clamp(8px, 1.5vw, 14px);
+  overflow-x: visible;
 }
 
 .meter-card {
@@ -384,10 +268,9 @@ h3 {
   grid-row: 1;
   width: 100%;
   max-width: 240px;
-  min-width:140px;
-  /* Reduced */
+  min-width: 150px;
   height: auto;
-  aspect-ratio: 5 / 4;
+  aspect-ratio: 3 / 3;
   padding: clamp(4px, 0.8vw, 8px);
   border-radius: 6px;
   box-shadow: inset 0 -3px 6px rgba(0, 0, 0, 0.45), 0 6px 10px rgba(0, 0, 0, 0.2);
@@ -395,6 +278,7 @@ h3 {
   align-items: center;
   justify-content: center;
   overflow: visible;
+ 
 }
 
 .meter-card > img {
@@ -407,7 +291,7 @@ h3 {
 #vlt {
   position: relative;
   top: 5px;
-  transform: scale(1.32);
+  transform: scale(1.05);
   transform-origin: center;
 }
  
@@ -675,23 +559,25 @@ h3 {
 #voltmeter1-label,
 #ammter2-label,
 #voltmeter2-label {
-  margin-top: 40px;
-  position: absolute;
-  top: -35px;
-  left: 38px;
+  margin-top: 0;
+  position: static;
+  top: auto;
+  left: auto;
   grid-row: 2;
   letter-spacing: 0.08em;
   font-size: clamp(0.88rem, 0.5vw, 0.89rem);
   color: #3b2f24;
   font-weight: 700;
   white-space: nowrap;
-  width: 150px;
+  width: min(170px, 100%);
   padding: 4px 12px;
   background: linear-gradient(135deg, #fff7e2, #e3cfa5);
   box-shadow: 0 3px 0 #b18c58, 0 6px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.8);
   text-shadow: 0 1px 0 #fff, 0 2px 4px rgba(0, 0, 0, 0.25);
   border-radius: 4px;
   text-align: center;
+  justify-self: center;
+  align-self: start;
 
 }
 
@@ -704,65 +590,62 @@ h3 {
 }
 
 #ammter2-label {
-  grid-column: 3;
+  grid-column: 1;
 }
 
 #voltmeter2-label {
-  grid-column: 4;
+  grid-column: 2;
 }
  
 /* On very small widths, further reduce to prevent squeeze/overflow */
 @media (max-width: 720px) {
   .meters {
-    grid-template-columns: repeat(4, minmax(110px, 1fr));
-    /* Further reduced */
-    padding: 0 clamp(10px, 2vw, 16px);
-    overflow-x: hidden;
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+    padding: 0 clamp(6px, 2vw, 12px);
+    overflow-x: visible;
   }
 
   .meter-card {
-    min-width: 110px;
-    aspect-ratio: 5 / 4;
+    min-width: 120px;
+    max-width: 190px;
+    aspect-ratio: 1 / 1;
   }
 }
 
-/* Additional media for very small screens: stack meters into 2x2 grid */
+/* Additional media for very small screens: stack meters in one column */
 @media (max-width: 600px) {
   .meters {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     grid-template-rows: repeat(4, auto);
-    /* 2 rows of meters + 2 rows of labels */
+    justify-items: center;
+  }
+
+  .meter-card:nth-of-type(1) {
+    grid-column: 1;
+    grid-row: 1;
   }
 
   #ammter1-label {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .meter-card:nth-of-type(2) {
     grid-column: 1;
     grid-row: 3;
   }
 
   #voltmeter1-label {
-    grid-column: 2;
-    grid-row: 3;
-  }
-
-  #ammter2-label {
     grid-column: 1;
     grid-row: 4;
   }
 
+  #ammter2-label,
   #voltmeter2-label {
-    grid-column: 2;
-    grid-row: 4;
-  }
-
-  .meter-card:nth-child(3) {
-    grid-row: 2;
-  }
-
-  .meter-card:nth-child(4) {
-    grid-row: 2;
+    display: none;
   }
 }
-.lamp-load-label { 
+.rheostat-label { 
   position: absolute;
   top: 87%;
   left: 55px;
@@ -821,9 +704,9 @@ h3 {
 ========================= */
 .workspace {
   position: absolute;
-  top: 380px;
-  left: 206px;
-  height: 295px;
+  top: 300px;
+  left: 200px;
+  height: 300px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -1912,19 +1795,17 @@ body.is-modal-open {
     overflow-x: auto;
   }
 
-  /* Optional: Allow meter area to expand beyond 900px on very wide screens */
   .meter-area {
-    width: 100%;
+    width: min(100%, 760px);
   }
 
   .meters {
-    grid-template-columns: repeat(4, minmax(170px, 1fr));
-    /* Restore larger min-width for better spacing on wide screens */
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
     overflow-x: visible;
   }
 
   .meter-card {
-    min-width: 170px;
+    min-width: 180px;
   }
 }
 

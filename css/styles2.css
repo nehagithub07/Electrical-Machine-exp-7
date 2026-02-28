@@ -8,8 +8,6 @@
  .point-D,
  .point-E, 
  .point-G, 
- .point-H, 
- .point-I, 
  .point-J, 
  .point-K,
  .point-A1,
@@ -20,8 +18,8 @@
  .point-Z2,
  .point-A4,
  .point-Z4,
- .point-L1,
- .point-L2 {
+ .point-I,
+ .point-H {
    position: absolute;
    width: 44px;
    height: 44px;
@@ -37,8 +35,8 @@
    cursor: pointer;
    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
  }
-.point-L1:hover,
-.point-L2:hover {
+.point-I:hover,
+.point-H:hover {
   transform: translateY(-2px);
   box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.7),
     inset 0 -3px 8px rgba(0, 0, 0, 0.14),
@@ -46,8 +44,8 @@
   filter: saturate(1.04);
 }
 
-.point-L1:active,
-.point-L2:active {
+.point-I:active,
+.point-H:active {
   transform: translateY(0);
   box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.55),
     inset 0 -3px 8px rgba(0, 0, 0, 0.12),
@@ -62,8 +60,6 @@
 .point-D:hover,
 .point-E:hover,
 .point-G:hover,
-.point-H:hover,
-.point-I:hover,
 .point-J:hover,
 .point-K:hover,
 .point-A1:hover,
@@ -74,8 +70,8 @@
 .point-Z2:hover,
 .point-A4:hover,
 .point-Z4:hover,
-.point-L1:hover,
-.point-L2:hover {
+.point-I:hover,
+.point-H:hover {
    transform: translateY(-2px);
    box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.7),
      inset 0 -3px 8px rgba(0, 0, 0, 0.14),
@@ -104,8 +100,8 @@
 .point-Z2:active,
 .point-A4:active,
 .point-Z4:active,
-.point-L1:active,
-.point-L2:active   {
+.point-I:active,
+.point-H:active   {
    transform: translateY(0);
    box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.55),
      inset 0 -3px 8px rgba(0, 0, 0, 0.12),
@@ -144,7 +140,7 @@
 
  #pointC {
    position: absolute;
-   left: 70px;
+   left: 52px;
   top: 158px;
  
  
@@ -152,31 +148,22 @@
 
  #pointD {
    position: absolute;
-left: 145px;
+left: 122px;
 top: 158px;
     
  }
 
  #pointE {
    position: absolute;
-    left: 70px;
+    left: 50px;
    top: 158px;
  }
  #pointG {
  position: absolute;
-  left: 145px;
+  left: 122px;
   top: 158px;
  }
- #pointH {
-  position: absolute;
-    left: 70px;
-top: 160px;
- }
- #pointI {
- position: absolute;
-left: 145px;
-top: 160px;
- }
+ 
  #pointJ {
   position: absolute;
     left: 70px;
@@ -232,16 +219,16 @@ top: 158px;
 left:205px;
   top: 228px;
 }
-#pointL1 {
+#pointI {
   position: absolute;
   left: 62px;
-   top: 280px;
+   top: 100px;
 }
 
-#pointL2 {
+#pointH {
    position: absolute;
-  left:210px;
-top: 280px;
+  left:196px;
+top: 100px;
 }
 
  .point-R {
@@ -294,7 +281,7 @@ top: 280px;
    position: absolute;
    width: 24px;
    height: 24px;
-   left: 57px;
+   left: 42px;
    top: 175px;
  }
 
@@ -303,7 +290,7 @@ top: 280px;
    position: absolute;
    width: 24px;
    height: 24px;
-   left:  133px;
+   left:  110px;
    top: 175px;
  }
 
@@ -312,7 +299,7 @@ top: 280px;
    position: absolute;
    width: 24px;
    height: 24px;
-left: 57px;
+left: 40px;
   top: 175px;
 }
 .point-G {
@@ -320,7 +307,7 @@ left: 57px;
    position: absolute;
    width: 24px;
    height: 24px;
-    left:  133px;
+    left:  112px;
   top: 175px;
 }
 .point-H {
@@ -328,16 +315,16 @@ left: 57px;
    position: absolute;
    width: 24px;
    height: 24px;
-left: 57px;
-  top: 175px;
+   left: 185px;
+    top: 115px;
 }
 .point-I {
   font-weight: bold;
    position: absolute;
    width: 24px;
    height: 24px;
-    left:  133px;
-  top: 175px;
+    left:  50px;
+    top: 115px;
 }
 .point-J {
    font-weight: bold;
@@ -426,21 +413,4 @@ left: 57px;
  top: 210px;
 
 }
-.point-L1 {
-   font-weight: bold;
-   position: absolute;
-   width: 24px;
-   height: 24px;
-   left: 45px;
-   top: 290px;
-}
-
-.point-L2 {
-   font-weight: bold;
-   position: absolute;
-   width: 24px;
-   height: 24px;
-   left:  195px;
- top: 290px;
-
-}
+ 
