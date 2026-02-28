@@ -829,7 +829,7 @@ tr:nth-child(even) { background-color: #f8fbff; }
   function handleAddReading() {
     if (!enforceReady("addReading")) return;
     if (selectedIndex < 0) {
-      speakOrAlert("Move the rheostat knob to select a reading point first.");
+      speakOrAlert("Set the rheostate nob first.");
       return;
     }
     if (!readingArmed) {

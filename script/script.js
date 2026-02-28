@@ -590,7 +590,7 @@ const LAB_VOICE_CATALOG = [
   },
   {
     key: "before_add_table_select_bulbs",
-    text: "Select the number of bulbs first.",
+    text: "Set the rheostate nob first.",
     audio: "./audio/before_add_table_select_bulbs.wav"
   },
   {
