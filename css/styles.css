@@ -223,7 +223,21 @@ h3 {
   left: -8px;
 
 }
- 
+.rheostat-nob {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top:2px;
+  left: 20px;
+  cursor: grab;
+  transform-origin: 50% 50%;
+  touch-action: none;
+  user-select: none;
+}
+
+.rheostat-nob.is-grabbing {
+  cursor: grabbing;
+}
 .meter-area {
   position: relative;
   left: 0;

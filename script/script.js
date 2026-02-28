@@ -2338,9 +2338,9 @@ document.addEventListener("keydown", (e) => {
   // Override voltmeter-1 dial to land on ~225 V once starter is on.
   const voltmeter1ManualAngles = [5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5];
   const voltmeter2ManualAngles = [3, 1, -1, -3, -5, -7.8, -10, -13, -17, -20];
-  const GRAPH_TITLE_TEXT = "Terminal Voltage (V) vs Load Current (A)";
-  const GRAPH_X_AXIS_LABEL = "Load Current (A)";
-  const GRAPH_Y_AXIS_LABEL = "Terminal Voltage (V)";
+  const GRAPH_TITLE_TEXT = "Current (A) vs Voltage (V)";
+  const GRAPH_X_AXIS_LABEL = "Current (A)";
+  const GRAPH_Y_AXIS_LABEL = "Voltage (V)";
   const GRAPH_X_TICK_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 
   const readingsRecorded = [];
