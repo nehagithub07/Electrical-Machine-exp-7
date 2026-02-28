@@ -49,18 +49,14 @@ function setupJsPlumb() {
     pointG: BOTTOM_ANCHOR,
     pointH: [0, 0.5, -1, 0],
     pointI: [1, 0.5, 1, 0],
-    pointJ: [0, 0.5, -1, 0],
-    pointK: [1, 0.5, 1, 0],
     pointA1: [0, 0.5, -1, 0],
     pointZ1: [1, 0.5, 1, 0],
     pointA3: [0, 0.5, -1, 0],
     pointZ3: [1, 0.5, 1, 0],
     pointA2: [0, 0.5, -1, 0],
     pointZ2: [1, 0.5, 1, 0],
-    pointA4: [BOTTOM_ANCHOR, [0, 0.5, -1, 0]], // prefer downward entry for the L2 → A4 U-turn
-    pointZ4: [1, 0.5, 1, 0],
-    pointL1: [0, 0.5, -1, 0],
-    pointL2: BOTTOM_ANCHOR, // force L2 to drop straight down before curving toward A4
+    pointA4: [0, 0.5, -1, 0],
+    pointZ4: [1, 0.5, 1, 0]
   };
 
   const WIRE_COLORS = {
@@ -69,7 +65,7 @@ function setupJsPlumb() {
     green: "rgb(0, 255, 0)"
   };
   const redWirePoints = new Set(["pointR", "pointB"]);
-  const greenWirePoints = new Set(["pointL1", "pointL2"]);
+  const greenWirePoints = new Set(["pointF", "pointH"]);
 
   function getWireColorForId(id) {
     if (redWirePoints.has(id)) return WIRE_COLORS.red;
@@ -158,13 +154,17 @@ function setupJsPlumb() {
   }
 
   const WIRE_CURVE_OVERRIDES = new Map([
-    [connectionKey("pointR", "pointC"), 110],
-    [connectionKey("pointR", "pointE"), 150],
-    [connectionKey("pointB", "pointG"), 130],
-    [connectionKey("pointL", "pointD"), 90],
-    [connectionKey("pointL1", "pointJ"), -150],
-    [connectionKey("pointL2", "pointA4"), -120],
-    [connectionKey("pointZ4", "pointK"), 60],
+    [connectionKey("pointR", "pointL"), 90],
+    [connectionKey("pointB", "pointH"), 120],
+    [connectionKey("pointB", "pointA2"), 105],
+    [connectionKey("pointB", "pointZ2"), 130],
+    [connectionKey("pointF", "pointI"), 100],
+    [connectionKey("pointA", "pointA1"), 95],
+    [connectionKey("pointH", "pointZ1"), 115],
+    [connectionKey("pointC", "pointA3"), 85],
+    [connectionKey("pointD", "pointA4"), 90],
+    [connectionKey("pointE", "pointZ3"), 100],
+    [connectionKey("pointG", "pointZ4"), 120],
      
 
   ]);
@@ -295,21 +295,17 @@ function setupJsPlumb() {
 
   // Required connections: unsorted list for iteration order in auto-connect, sorted Set for checking
   const rawRequiredPairs = [
-    "pointR-pointC",
-    "pointR-pointE",
-    "pointB-pointG",
+    "pointR-pointL",
+    "pointB-pointH",
     "pointB-pointA2",
-    "pointA2-pointZ2",
-    "pointL-pointD",
+    "pointB-pointZ2",
+    "pointF-pointI",
     "pointA-pointA1",
-    "pointF-pointZ1",
-    "pointL2-pointA4",
-    "pointA4-pointZ4",
-    "pointZ4-pointK",
-    "pointI-pointJ",
-    "pointJ-pointL1",
-    "pointH-pointA3",
-    "pointH-pointZ3"
+    "pointH-pointZ1",
+    "pointC-pointA3",
+    "pointD-pointA4",
+    "pointE-pointZ3",
+    "pointG-pointZ4"
   ];
   const requiredPairs = normalizeRequiredPairs(rawRequiredPairs);
   const requiredConnections = new Set(requiredPairs.map(pair => {
@@ -360,17 +356,26 @@ function setupJsPlumb() {
     window.labSpeech.useRecordedVoice(voicePack);
   }
 
+  const POINT_LABEL_ALIASES = {
+    Z1: "F1",
+    Z2: "F2",
+    Z3: "F3",
+    Z4: "F4"
+  };
+
   function formatPointLabel(id) {
-    return String(id || "").replace(/^point/i, "").toUpperCase();
+    const rawLabel = String(id || "").replace(/^point/i, "").toUpperCase();
+    return POINT_LABEL_ALIASES[rawLabel] || rawLabel;
   }
 
   function formatPointSpeech(id) {
-    const cleaned = String(id || "")
+    const rawLabel = String(id || "")
       .replace(/^point/i, "")
       .replace(/[^A-Za-z0-9]/g, "")
       .toUpperCase();
-    if (!cleaned) return "";
-    const parts = cleaned.match(/[A-Z]+|[0-9]+/g) || [cleaned];
+    const aliased = POINT_LABEL_ALIASES[rawLabel] || rawLabel;
+    if (!aliased) return "";
+    const parts = aliased.match(/[A-Z]+|[0-9]+/g) || [aliased];
     return parts.join(" ");
   }
 

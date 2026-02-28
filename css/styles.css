@@ -66,7 +66,7 @@ body {
 
   /* Keep the whole window visible and scroll INSIDE it - only Y by default */
   max-height: calc(290dvh - (var(--gutter) + var(--gutter)));
-  overflow-y: auto;
+  overflow-y: hidden;
   overflow-x: hidden;
 
   border: 3px solid var(--ink);
@@ -235,7 +235,7 @@ h3 {
   width: 100%;
  
   min-height: clamp(250px, 25vw, 300px);
-  height: auto;
+  height: 330px;
   background-image: url(../images/wooden-texture.jpg);
   background-size: cover;
   background-position: center;
@@ -322,8 +322,7 @@ h3 {
 }
 
 /* ---- NEEDLES (responsive + consistent) ---- */
-.meter-needle1,
-.meter-needle2 {
+.meter-needle1 {
   position: absolute;
   width: clamp(30px, 22%, 60px);
   left: 50%;
@@ -344,32 +343,30 @@ h3 {
   pointer-events: none;
   z-index: 5;
 }
-.meter-needle1,
-.meter-needle2 {
+.meter-needle1 {
   transform: translate(-50%, -82.5%) rotate(-76deg);
 }
 
 /* Voltmeter artwork has a lower pivot point */
-.meter-needle3,
-.meter-needle4 {
+.meter-needle3  {
    
   transform: translate(-50%, -82.5%) rotate(-49deg);
 }
 
 
 
-.meter-needle3 img, .meter-needle4 img
+.meter-needle3 img
  {
   width: 100%;
-  height: 54px;
+  height: 80px;
   display: block;
   object-fit: contain;
   border-radius: 0;
   transform: none;
 }
-.meter-needle1 img, .meter-needle2 img {
+.meter-needle1 img {
   width: 100%;
-  height: 58px;
+  height: 80px;
   display: block;
   object-fit: contain;
   border-radius: 0;
@@ -556,12 +553,10 @@ h3 {
 
 /* ---- LABELS (always below meters, never cut) ---- */
 #ammter1-label,
-#voltmeter1-label,
-#ammter2-label,
-#voltmeter2-label {
+#voltmeter1-label{
   margin-top: 0;
-  position: static;
-  top: auto;
+  position: relative;
+  top: 10px;
   left: auto;
   grid-row: 2;
   letter-spacing: 0.08em;
@@ -589,13 +584,6 @@ h3 {
   grid-column: 2;
 }
 
-#ammter2-label {
-  grid-column: 1;
-}
-
-#voltmeter2-label {
-  grid-column: 2;
-}
  
 /* On very small widths, further reduce to prevent squeeze/overflow */
 @media (max-width: 720px) {
@@ -640,14 +628,11 @@ h3 {
     grid-row: 4;
   }
 
-  #ammter2-label,
-  #voltmeter2-label {
-    display: none;
-  }
+ 
 }
 .rheostat-label { 
   position: absolute;
-  top: 87%;
+  top: 47%;
   left: 55px;
   grid-row: 2;
   letter-spacing: 0.08em;
@@ -665,7 +650,7 @@ h3 {
 }
 .dc-motor-label {
   position: absolute;
-  top: 117%;
+  top: 120%;
   left: 20px;
   grid-row: 2;
   letter-spacing: 0.08em;
@@ -683,7 +668,7 @@ h3 {
 }
 .dc-generator-label {
     position: absolute;
-  top: 117%;
+  top: 120%;
   left: 10px;
   grid-row: 2;
   letter-spacing: 0.08em;
@@ -704,38 +689,45 @@ h3 {
 ========================= */
 .workspace {
   position: absolute;
-  top: 300px;
-  left: 200px;
-  height: 300px;
+  top: 350px;
+  left: 50px;
+  right: auto;
+  width: fit-content;
+  max-width: calc(100% - clamp(8px, 1.5vw, 20px));
+  min-height: clamp(250px, 23vw, 320px);
+  height: auto;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-start;
   border: 3px solid var(--ink);
   gap: clamp(18px, 2.5vw, 28px);
   padding: clamp(12px, 2vw, 18px);
+  box-sizing: border-box;
 }
 
 .equipment-row {
   display: flex;
+  width: 100%;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-start;
   flex-direction: column;
   gap: clamp(12px, 2vw, 20px);
-  /* Reduced gap */
 }
 
 .assembly {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: clamp(2px, 0.5vw, 6px);
-  min-width: clamp(320px, 45vw, 500px);
+  justify-content: flex-start;
+  gap: clamp(6px, 1vw, 12px);
+  width: max-content;
+  max-width: 100%;
 }
 
 .motor-box,
 .generator-box {
-  width: 100%;
+  flex: 0 1 clamp(240px, 20vw, 280px);
+  width: clamp(240px, 20vw, 280px);
   aspect-ratio: 1;
   border: 3px solid var(--ink);
   background: linear-gradient(180deg, #b7b2a6, #c5bfb2);
@@ -744,7 +736,8 @@ h3 {
   justify-content: center;
   padding: clamp(12px, 2vw, 18px);
   position: relative;
-  height: 250px;
+  height: clamp(235px, 19vw, 260px);
+  min-width: 0;
 }
 
 .motor-box img {
@@ -785,13 +778,12 @@ h3 {
 }
 
 .coupler {
-  /* Slightly reduced */
-  width: 80px;
+  width: clamp(52px, 6vw, 80px);
   height: auto;
   display: flex;
   justify-content: center;
   flex-shrink: 0;
-  margin: 0 clamp(-19px, -1.5vw, -6px);
+  margin: 0 clamp(-20px, -1vw, -1px);
 }
 
 .coupler img {
@@ -987,7 +979,7 @@ h3 {
 .observation-floating {
   position: absolute;
   top: 250px;
-  right: -50px;
+  right: -120px;
   transform: translateX(calc(100% + clamp(8px, 2vw, 16px)));
   width: clamp(220px, 22vw, 340px);
   min-width: 0;
@@ -1059,8 +1051,8 @@ h3 {
 
 .graph-actions {
   position: relative;
-  top: 420px;
-  left: 1010px;
+  top: 340px;
+  left: 900px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1258,7 +1250,7 @@ h3 {
 .mcb-label {
   position: absolute;
   letter-spacing: 0.1em;
-  top: 133%;
+  top: 130%;
   left: 50%;
   transform: translateX(-50%);
   font-size: clamp(0.99rem, 0.95vw, 0.75rem);
@@ -1274,7 +1266,7 @@ h3 {
 .starter-label {
   position: absolute;
   letter-spacing: 0.1em;
-  top: 104.5%;
+  top: 102%;
   left: 50%;
   transform: translateX(-50%);
   font-size: clamp(0.99rem, 0.95vw, 0.75rem);
@@ -1789,10 +1781,10 @@ body.is-modal-open {
 /* =========================
    RESPONSIVE LAYOUT
 ========================= */
-/* Enable horizontal overflow/scrolling for larger screens (e.g., wider than typical "100%" viewport like 1024px) */
+/* Keep horizontal overflow disabled on larger screens as well */
 @media (min-width: 1024px) {
   .panel {
-    overflow-x: auto;
+    overflow-x: hidden;
   }
 
   .meter-area {
@@ -2241,6 +2233,10 @@ body.is-modal-open {
   .top-row {
     grid-template-columns: 1fr 2fr;
   }
+
+  .workspace {
+    left: clamp(16px, 5vw, 200px);
+  }
 }
 
 
@@ -2258,6 +2254,27 @@ body.is-modal-open {
 
   .equipment-row {
     justify-content: center;
+  }
+
+  .workspace {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    width: 100%;
+    margin-top: clamp(16px, 3vw, 24px);
+    min-height: clamp(220px, 45vw, 300px);
+  }
+
+  .assembly {
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .coupler {
+    margin: 0;
+    width: clamp(46px, 14vw, 70px);
   }
 }
 

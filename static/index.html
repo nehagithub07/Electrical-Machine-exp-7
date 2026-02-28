@@ -152,7 +152,7 @@
                 </h3>
                 <div>
                   <button class="point-A1">A1</button>
-                  <button class="point-Z1">Z1</button>
+                  <button class="point-Z1">F1</button>
                         
                   <div id="pointA1" class="point"></div>
                   <div id="pointZ1" class="point"></div>
@@ -160,7 +160,7 @@
                 </div>
                 <div>
                   <button class="point-A2">A2</button>
-                  <button class="point-Z2">Z2</button>
+                  <button class="point-Z2">F2</button>
                         
                   <div id="pointA2" class="point"></div>
                   <div id="pointZ2" class="point"></div>
@@ -180,7 +180,7 @@
                 </h3>
                   <div>
                      <button class="point-A3">A3</button>
-                     <button class="point-Z3">Z3</button>
+                     <button class="point-Z3">F3</button>
                            
                      <div id="pointA3" class="point"></div>
                      <div id="pointZ3" class="point"></div>
@@ -188,7 +188,7 @@
                 </div>
                   <div>
                      <button class="point-A4">A4</button>
-                     <button class="point-Z4">Z4</button>
+                     <button class="point-Z4">F4</button>
                            
                      <div id="pointA4" class="point"></div>
                      <div id="pointZ4" class="point"></div>
@@ -271,11 +271,11 @@
              <table class="conn-table">
                <tr>
                  <th>From</th>
-                 <td>R</td><td>R</td><td>B</td><td>B</td><td>A2</td><td>L</td><td>F</td><td>A</td><td>L2</td><td>A4</td><td>Z4</td><td>I</td><td>J</td><td>H</td><td>H</td>
+                 <td>R</td><td>B</td><td>B</td><td>B</td><td>F</td><td>A</td><td>H</td><td>C</td><td>D</td><td>E</td><td>G</td>
                </tr>
                <tr>
                  <th>To</th>
-                 <td>C</td><td>E</td><td>G</td><td>A2</td><td>Z2</td><td>D</td><td>Z1</td><td>A1</td><td>A4</td><td>Z4</td><td>K</td><td>J</td><td>L1</td><td>A3</td><td>Z3</td>
+                 <td>L</td><td>H</td><td>A2</td><td>F2</td><td>I</td><td>A1</td><td>F1</td><td>A3</td><td>A4</td><td>F3</td><td>F4</td>
                </tr>
              </table>
  
@@ -354,40 +354,32 @@
                   <tr>
                     <th class="sticky top-0 z-10 px-4 py-3 text-left text-sm font-semibold text-gray-700 bg-gray-50">From</th>
                     <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">R</th>
-                    <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">R</th>
                     <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">B</th>
                     <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">B</th>
-                    <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">A2</th>
-                    <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">L</th>
+                    <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">B</th>
                     <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">F</th>
                     <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">A</th>
-                    <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">L2</th>
-                    <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">A4</th>
-                    <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">Z4</th>
-                    <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">I</th>
-                    <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">J</th>
                     <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">H</th>
-                    <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">H</th>
+                    <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">C</th>
+                    <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">D</th>
+                    <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">E</th>
+                    <th class="sticky top-0 z-10 px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase">G</th>
                   </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-100 text-sm">
                   <tr class="hover:bg-gray-50">
                     <td class="px-4 py-3 font-medium text-gray-800 bg-gray-50">To</td>
-                    <td class="px-3 py-3 text-center">C</td>
-                    <td class="px-3 py-3 text-center">E</td>
-                    <td class="px-3 py-3 text-center">G</td>
+                    <td class="px-3 py-3 text-center">L</td>
+                    <td class="px-3 py-3 text-center">H</td>
                     <td class="px-3 py-3 text-center">A2</td>
-                    <td class="px-3 py-3 text-center">Z2</td>
-                    <td class="px-3 py-3 text-center">D</td>
-                    <td class="px-3 py-3 text-center">Z1</td>
+                    <td class="px-3 py-3 text-center">F2</td>
+                    <td class="px-3 py-3 text-center">I</td>
                     <td class="px-3 py-3 text-center">A1</td>
-                    <td class="px-3 py-3 text-center">A4</td>
-                    <td class="px-3 py-3 text-center">Z4</td>
-                    <td class="px-3 py-3 text-center">K</td>
-                    <td class="px-3 py-3 text-center">J</td>
-                    <td class="px-3 py-3 text-center">L1</td>
+                    <td class="px-3 py-3 text-center">F1</td>
                     <td class="px-3 py-3 text-center">A3</td>
-                    <td class="px-3 py-3 text-center">Z3</td>
+                    <td class="px-3 py-3 text-center">A4</td>
+                    <td class="px-3 py-3 text-center">F3</td>
+                    <td class="px-3 py-3 text-center">F4</td>
                   </tr>
                 </tbody>
               </table>
