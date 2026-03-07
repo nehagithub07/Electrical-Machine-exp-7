@@ -1664,29 +1664,23 @@
   <script>
     const DEFAULT_CUE_LEAD = 0.65; // seconds before narration to reveal text
 const introCues = [
-  { start: 0, end: 18, text: "Welcome to the experiment “To study the magnetisation characteristics of DC shunt generator.” In this experiment, you will learn the magnetisation characteristics of a DC shunt generator and understand the relationship between generated voltage and field current." },
+  { start: 0, end: 13, text: "Welcome to the experiment “To study the magnetisation characteristics of DC shunt generator.” In this experiment, you will learn the magnetisation characteristics of DC Shunt Generator and the graph between the generated voltage and field current." },
 
-  { start: 19, end: 38, text: "To guide you throughout the learning process, this experiment is organized into several key sections. We begin with the Aim, which clearly states the objective of studying the relationship between generated voltage and field current and understanding how voltage builds up in a DC shunt generator." },
+  { start: 14, end: 30, text: "To guide you throughout the learning process, this experiment is organized into several key sections. We begin with the Aim, which clearly states the objective of studying the relationship between generated voltage and field current and understanding how voltage builds up in a DC shunt generator." },
 
-  { start: 39, end: 58, text: "This is followed by the Theory section, where you will learn the fundamental concepts required to understand the magnetisation characteristic, also known as the Open Circuit Characteristic, along with the effects of residual magnetism, magnetic saturation, and the principle of voltage build-up in a DC shunt generator." },
+  { start: 31, end: 46, text: "This is followed by the Theory section, where you will learn the fundamental concepts required to understand the magnetisation characteristic (Open Circuit Characteristic), the effect of residual magnetism, magnetic saturation, and the principle of voltage build-up in a DC shunt generator."},
 
-  { start: 59, end: 82, text: "Before proceeding to the simulation, the Pretest section allows you to evaluate your basic understanding of DC machines and magnetisation concepts. In this section, you will receive five questions at a time. Each time you click the Refresh button, a new set of questions will be generated, and all attempted questions will be recorded in your Progress Report." },
+  { start: 47, end: 69, text: "Before proceeding to the simulation, the Pretest section allows you to evaluate your basic understanding of DC machines and magnetisation concepts. In this section, you will receive five questions at a time. Each time you click the Refresh button, a new set of questions will be generated. All attempted questions will be recorded and reflected in your Progress Report."},
 
-  { start: 83, end: 108, text: "Next, you can move to the Procedure section, which provides step-by-step instructions for conducting the experiment properly in a virtual environment. The most important part of the experiment is the Simulation section, where you will first explore the Demo tab to understand the setup and measurement process, and then proceed to the Simulation tab to vary the field current and observe the generated voltage." },
+  { start: 70, end: 100, text: "Next, you can move to the Procedure section, which provides step-by-step instructions for conducting the experiment properly in a virtual environment. The most important part of the experiment is the Simulation section. Here, you will first explore the Demo tab to understand the experimental setup and measurement process. After that, you can proceed to the Simulation tab, where you will vary the field current, observe the corresponding generated voltage, and plot the magnetisation (OCC) curve."},
 
-  { start: 109, end: 125, text: "During the simulation, you will record the readings and plot the magnetisation or Open Circuit Characteristic curve between generated voltage and field current, helping you understand how voltage changes with varying field excitation." },
+  { start: 101, end: 117, text: "Once the simulation is completed, the Posttest section helps you assess your understanding of the experiment. Similar to the Pretest, five questions will be provided at a time, and clicking the Refresh button will generate a new set. Your performance will again be recorded in the Progress Report."},
+  { start: 118, end: 126, text: "Finally, the References and Contributors sections provide supporting learning resources and acknowledge the team involved in developing this experiment."},
+  { start: 127, end: 146, text: "A dedicated Progress Report feature is also available, allowing you to track your real-time performance. To access it, you must enter your details such as name, email ID, and designation in the User Input tab. The system records your activities across all sections of the experiment in one consolidated report." },
 
-  { start: 126, end: 145, text: "Once the simulation is completed, the Posttest section helps you assess your understanding of the experiment. Similar to the Pretest, five questions will be provided at a time, and clicking the Refresh button will generate a new set. Your performance will again be recorded in the Progress Report." },
+  { start: 147, end: 168, text: "This report provides a detailed overview of your learning journey, including your pretest and posttest performance, the number of questions attempted, marks obtained, total time spent on the experiment, and a complete summary of your simulation activity." },
 
-  { start: 146, end: 156, text: "Finally, the References and Contributors sections provide supporting learning resources and acknowledge the team involved in developing this experiment." },
-
-  { start: 157, end: 173, text: "A dedicated Progress Report feature is also available to help you track your real-time performance. To access it, you must enter your details such as name, email ID, and designation in the User Input tab. The system records your activities across all sections of the experiment." },
-
-  { start: 174, end: 194, text: "This report provides a detailed overview of your learning journey, including your pretest and posttest performance, the number of questions attempted, marks obtained, total time spent on the experiment, and a complete summary of your simulation activity." },
-
-  { start: 195, end: 207, text: "It also includes your basic information along with the report generation date, making it a comprehensive and personalized academic record of your experiment." },
-
-  { start: 208, end: 220, text: "Together, these sections ensure a smooth, structured, and engaging learning experience while helping you clearly understand the magnetisation characteristics and behaviour of a DC shunt generator." }
+  { start: 169, end: 182, text: "Together, these sections ensure a smooth, structured, and engaging learning experience while helping you clearly understand the magnetisation characteristics and behaviour of a DC shunt generator."},
 ];
     const INTRO_STORAGE_KEY = 'dcShuntIntroShown:aim';
     const INTRO_STORAGE_VERSION = '1';
