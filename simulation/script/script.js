@@ -2552,6 +2552,18 @@ document.addEventListener("keydown", (e) => {
       .replace(/'/g, "&#39;");
   }
 
+  function formatDurationWithUnits(ms) {
+    const totalSeconds = Math.max(0, Math.floor((Number(ms) || 0) / 1000));
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    const parts = [];
+    if (hours > 0) parts.push(`${hours} hr`);
+    parts.push(`${minutes} min`);
+    parts.push(`${seconds} sec`);
+    return parts.join(" ");
+  }
+
   function generateReport() {
     const tableEl = document.getElementById("observationTable");
     if (!tableEl) {
@@ -2600,155 +2612,310 @@ document.addEventListener("keydown", (e) => {
       })();
     const logoLeftSrc = new URL("../images/IIT Logo.png", baseHref).toString();
     const logoRightSrc = new URL("../images/image.png", baseHref).toString();
+    const tableHeaders = Array.from(tableEl.querySelectorAll("thead th")).map((cell) => cell.textContent.trim());
+    const serialHeader = tableHeaders[0] || "S. No.";
+    const valueHeaderOne = tableHeaders[1] || "Reading 1";
+    const valueHeaderTwo = tableHeaders[2] || "Reading 2";
     const css = `
+* { box-sizing: border-box; }
+:root {
+  color-scheme: light;
+  --report-border: #d1d5db;
+  --report-muted: #4b5563;
+  --report-text: #111827;
+  --report-subtle: #f9fafb;
+  --report-surface: #ffffff;
+}
+html { background: #ffffff; }
 body {
   font-family: 'Inter', 'Segoe UI', sans-serif;
-  background: #f3f6fb;
-  color: #1f2d3d;
-  margin: 40px auto;
-  max-width: 960px;
-  padding: 32px;
-  background-color: #ffffff;
-  border-radius: 16px;
-  border: 1px solid #e5e9f2;
-  box-shadow: 0 10px 30px rgba(31, 45, 61, 0.12);
-  line-height: 1.65;
-}
-h1, h2, h3 { color: #1f2d3d; margin-top: 0; font-weight: 700; }
-h1 {
-  font-size: 28px;
-  margin-bottom: 14px;
-  padding-bottom: 10px;
-  border-bottom: 3px solid #2f7bfa;
-}
-h2 { font-size: 22px; margin-bottom: 10px; color: #2b3f55; }
-h3 { font-size: 18px; margin-bottom: 8px; }
-.section {
-  background: linear-gradient(135deg, #f8fbff 0%, #f3f6fb 100%);
-  padding: 20px 22px;
-  margin-bottom: 28px;
-  border-radius: 12px;
-  border: 1px solid #e5e9f2;
-  box-shadow: 0 4px 12px rgba(31,45,61,0.06);
-}
-.label { font-weight: 600; color: #1f2d3d; }
-ul { padding-left: 20px; margin-top: 10px; }
-.two-column-list { column-count: 2; column-gap: 40px; list-style-position: inside; margin-top: 10px; }
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
-  margin-top: 12px;
-}
-.info-card {
-  background: #fff;
-  border: 1px solid #e5e9f2;
-  border-radius: 10px;
-  padding: 12px 14px;
-  box-shadow: 0 4px 10px rgba(31,45,61,0.05);
-  font-size: 14px;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-  box-shadow: 0 2px 10px rgba(31, 45, 61, 0.06);
-  background-color: white;
-  border-radius: 10px;
-  overflow: hidden;
-}
-th, td {
-  border: 1px solid #e5e9f2;
-  padding: 12px;
-  text-align: center;
-  font-size: 15px;
-}
-th {
-  background: linear-gradient(135deg, #2f7bfa 0%, #1f62d0 100%);
-  color: white;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-}
-tr:nth-child(even) { background-color: #f8fbff; }
-.graph {
-  text-align: center;
-  margin-top: 24px;
-  padding: 20px;
-  border: 1px solid #e5e9f2;
-  border-radius: 12px;
   background: #ffffff;
-  box-shadow: 0 4px 10px rgba(31,45,61,0.06);
+  color: var(--report-text);
+  margin: 0;
+  padding: 28px;
 }
-.header-row {
+#report-root {
+  max-width: 980px;
+  margin: 0 auto;
+}
+.report-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.report-card {
+  background: var(--report-surface);
+  border: 1px solid var(--report-border);
+  border-radius: 4px;
+  padding: 18px;
+  page-break-inside: avoid;
+  break-inside: avoid-page;
+}
+.report-brand {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 26px;
+  margin-bottom: 18px;
 }
-.header-row h1 {
+.report-brand-copy {
   flex: 1;
   text-align: center;
+}
+.report-title {
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--report-text);
+  margin: 10px 0 6px;
+}
+.report-subtitle {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--report-muted);
   margin: 0;
 }
-.badge {
-  padding: 8px 14px;
-  border-radius: 20px;
-  background: #e8f1ff;
-  color: #1f62d0;
+.report-grid-two {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 16px;
+  align-items: start;
+}
+.report-section-title {
+  font-size: 18px;
+  line-height: 1.3;
   font-weight: 600;
-  font-size: 13px;
+  margin: 0 0 12px;
+  color: var(--report-text);
+}
+.report-copy {
+  margin: 0 0 12px;
+  color: #1f2937;
+  line-height: 1.65;
+  text-align: justify;
+}
+.report-copy:last-child {
+  margin-bottom: 0;
+}
+.report-copy strong {
+  color: var(--report-text);
+}
+.report-list {
+  margin: 0;
+  padding-left: 18px;
+  columns: 2;
+  column-gap: 28px;
+}
+.report-list li {
+  margin-bottom: 8px;
+  color: #1f2937;
+}
+.report-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.report-meta-card {
+  background: var(--report-subtle);
+  border: 1px solid var(--report-border);
+  border-radius: 4px;
+  padding: 12px 14px;
+  min-height: 88px;
+}
+.report-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--report-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.report-value {
+  color: var(--report-text);
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+.report-duration {
+  color: var(--report-text);
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 700;
+}
+.report-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.report-note {
+  font-size: 12px;
+  color: var(--report-muted);
+  background: var(--report-subtle);
+  border: 1px solid var(--report-border);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-weight: 500;
+  white-space: nowrap;
 }
 .vl-logo {
-  height: 100px;
+  height: 72px;
   width: auto;
-  max-width: 200px;
+  max-width: 148px;
   object-fit: contain;
   flex-shrink: 0;
+}
+.report-data-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: 16px;
+  align-items: start;
+}
+.report-table-wrap {
+  overflow: hidden;
+  border: 1px solid var(--report-border);
+  border-radius: 4px;
+  background: #ffffff;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+thead {
+  background: var(--report-subtle);
+}
+th,
+td {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 9px 10px;
+  text-align: left;
+  color: #1f2937;
+}
+th {
+  font-weight: 600;
+  color: var(--report-text);
+  white-space: nowrap;
+}
+tbody tr:last-child td {
+  border-bottom: none;
+}
+.report-chart-panel {
+  border: 1px solid var(--report-border);
+  border-radius: 4px;
+  padding: 12px;
+  background: #ffffff;
+}
+.report-chart-shell {
+  min-height: 320px;
+}
+.report-empty {
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--report-muted);
+  background: var(--report-subtle);
+  border-radius: 4px;
+}
+.legacy-report-section,
+.legacy-report-actions {
+  display: none !important;
 }
 .report-actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 28px;
 }
 .print-btn,
 .download-btn {
-  padding: 12px 24px;
-  font-size: 15px;
-  border: none;
-  border-radius: 30px;
-  color: white;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.2;
+  padding: 0.65rem 1.15rem;
   cursor: pointer;
-  transition: all 0.25s ease;
 }
 .print-btn {
-  background: linear-gradient(to right, #2f7bfa, #1f62d0);
+  background: #ffffff;
+  color: #1f2937;
+  border: 1px solid #9ca3af;
 }
 .download-btn {
-  background: linear-gradient(to right, #28a745, #1f8d38);
+  background: #1f2937;
+  color: #ffffff;
+  border: 1px solid #1f2937;
 }
-.print-btn:hover,
+.print-btn:hover {
+  background: #f9fafb;
+}
 .download-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(31,45,61,0.12);
+  background: #111827;
+}
+@media (max-width: 900px) {
+  body {
+    padding: 18px;
+  }
+  .report-grid-two,
+  .report-data-grid,
+  .report-meta-grid {
+    grid-template-columns: 1fr;
+  }
+  .report-brand {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .report-brand-copy {
+    text-align: left;
+    width: 100%;
+  }
+  .report-list {
+    columns: 1;
+  }
 }
 @media print {
-  .print-btn,
-  .download-btn,
-  .report-actions { display:none; }
-  body { margin:0; box-shadow:none; border:none; padding:0; }
+  body {
+    padding: 0;
+  }
+  .report-actions {
+    display: none !important;
+  }
+}
+@page {
+  size: A4 portrait;
+  margin: 12mm;
 }
     `;
 
-    const startTimeText = new Date(sessionStart).toLocaleTimeString();
+    const reportDateText = now.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric"
+    });
+    const startTimeText = new Date(sessionStart).toLocaleString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true
+    });
     const endTime = Date.now();
-    const endTimeText = new Date(endTime).toLocaleTimeString();
+    const endTimeText = new Date(endTime).toLocaleString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true
+    });
     const durationMs = Math.max(0, endTime - sessionStart);
-    const durationTotalSeconds = Math.floor(durationMs / 1000);
-    const durationMinutes = Math.floor(durationTotalSeconds / 60);
-    const durationSeconds = durationTotalSeconds % 60;
-    const durationText = `${durationMinutes} min ${String(durationSeconds).padStart(2, "0")} sec`;
+    const durationText = formatDurationWithUnits(durationMs);
     if (typeof window.labTracking?.markSimulationEnd === "function") {
       window.labTracking.markSimulationEnd(endTime);
     }
@@ -2759,30 +2926,115 @@ tr:nth-child(even) { background-color: #f8fbff; }
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulation Report</title>
   <base href="${baseHref}">
   <style>${css}</style>
   <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
 </head>
 <body id="report-root">
-<div class="header-row">
-  <img src="${logoLeftSrc}" class="vl-logo" />
-  <h1>Virtual Labs Simulation Report</h1>
-  <img src="${logoRightSrc}" class="vl-logo" />
-</div>
-
-  <div class="section">
-    <p class="badge">Electrical Machines Lab</p>
-    <p><span class="label">Experiment Title:</span>To Study Magnetisation Characteristics of DC Shunt Generator.</p>
-    <p><span class="label">Date:</span> ${now.toLocaleDateString()}</p>
-    <div class="info-grid">
-        <div class="info-card"><span class="label">Start Time:</span><br>${startTimeText}</div>
-        <div class="info-card"><span class="label">End Time:</span><br>${endTimeText}</div>
-        <div class="info-card"><span class="label">Total Time Spent:</span><br>${durationText}</div>
+  <div class="report-shell">
+    <section class="report-card" data-progress-export-block="overview">
+      <div class="report-brand">
+        <img src="${logoLeftSrc}" class="vl-logo" alt="IIT Roorkee logo" />
+        <div class="report-brand-copy">
+          <span class="report-note">Electrical Machines Lab</span>
+          <h1 class="report-title">Virtual Labs Simulation Report</h1>
+          <p class="report-subtitle">To Study Magnetisation Characteristics of DC Shunt Generator</p>
+        </div>
+        <img src="${logoRightSrc}" class="vl-logo" alt="Virtual Labs logo" />
       </div>
-    </div>
 
-  <div class="section">
+      <div class="report-grid-two">
+        <div>
+          <h2 class="report-section-title">Experiment Overview</h2>
+          <p class="report-copy"><strong>Aim:</strong> To study the magnetisation characteristics of the DC shunt generator by observing how the output varies during the experiment and by plotting the required graph.</p>
+          <p class="report-copy"><strong>Summary:</strong> The experiment was completed by following the connection sequence, recording the observation readings, and plotting the graph for ${escapeHtml(GRAPH_TITLE_TEXT)}.</p>
+          <h3 class="report-section-title">Components and Key Parameters</h3>
+          <ul class="report-list">
+            <li>MCB</li>
+            <li>3-Point Starter: 220 V DC, 7.5 HP</li>
+            <li>DC Shunt Motor: 5 HP, 220 V DC, 19 A (max), 1500 RPM</li>
+            <li>DC Shunt Generator: 3 kW, 220 V DC, 1500 RPM</li>
+            <li>Load Type: Resistive Lamp Load</li>
+            <li>Field Rheostat</li>
+            <li>DC Voltmeter: 0-420 V</li>
+            <li>DC Ammeter: 0-30 A</li>
+            <li>Connecting Leads</li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="report-section-title">Session Details</h2>
+          <div class="report-meta-grid">
+            <div class="report-meta-card">
+              <span class="report-label">Report Date</span>
+              <span class="report-value">${escapeHtml(reportDateText)}</span>
+            </div>
+            <div class="report-meta-card">
+              <span class="report-label">Start Time</span>
+              <span class="report-value">${escapeHtml(startTimeText)}</span>
+            </div>
+            <div class="report-meta-card">
+              <span class="report-label">End Time</span>
+              <span class="report-value">${escapeHtml(endTimeText)}</span>
+            </div>
+            <div class="report-meta-card">
+              <span class="report-label">Total Duration</span>
+              <span class="report-duration">${escapeHtml(durationText)}</span>
+            </div>
+            <div class="report-meta-card">
+              <span class="report-label">Readings Recorded</span>
+              <span class="report-value">${escapeHtml(String(observationRows.length))}</span>
+            </div>
+            <div class="report-meta-card">
+              <span class="report-label">Graph Status</span>
+              <span class="report-value">Plotted</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="report-card" data-progress-export-block="results">
+      <div class="report-section-head">
+        <h2 class="report-section-title" style="margin:0;">Observations and Graph</h2>
+        <span class="report-note">${escapeHtml(`${observationRows.length} readings recorded`)}</span>
+      </div>
+
+      <div class="report-data-grid">
+        <div class="report-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>${escapeHtml(serialHeader)}</th>
+                <th>${escapeHtml(valueHeaderOne)}</th>
+                <th>${escapeHtml(valueHeaderTwo)}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${observationRows.length ? observationRows.map(function (r) {
+                  return "<tr><td>" + escapeHtml(r.sNo) + "</td><td>" + escapeHtml(r.current) + "</td><td>" + escapeHtml(r.voltage) + "</td></tr>";
+              }).join("") : "<tr><td colspan='3'>No readings recorded.</td></tr>"}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="report-chart-panel">
+          <h3 class="report-section-title">Output Graph</h3>
+          <p class="report-copy">The graph presents ${escapeHtml(GRAPH_TITLE_TEXT)} using the readings captured in the observation table.</p>
+          <div id="report-graph" class="report-chart-shell"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="report-actions">
+      <button class="print-btn" type="button" onclick="window.print()">Print</button>
+      <button class="download-btn" type="button" data-report-download onclick="downloadReport()">Download</button>
+    </div>
+  </div>
+
+  <div class="legacy-report-section section">
     <h2>Summary</h2>
     <h3>Aim</h3>
     <p style="text-align:justify;">To study the external characteristic of a DC shunt generator by varying the lamp load, measuring the terminal voltage and load current, and plotting the terminal voltage versus load current (V–I) curve.</p>
@@ -2805,7 +3057,7 @@ tr:nth-child(even) { background-color: #f8fbff; }
  
   </div>
 
-  <div class="section">
+  <div class="legacy-report-section section">
     <h3>Observation Table</h3>
     <table>
       <thead>
@@ -2819,12 +3071,12 @@ tr:nth-child(even) { background-color: #f8fbff; }
     </table>
   </div>
 
-  <div class="section graph">
+  <div class="legacy-report-section section graph">
     <h3>Graph</h3>
-    <div id="report-graph" style="position:relative;width:100%;height:360px;"></div>
+    <div id="legacy-report-graph" style="position:relative;width:100%;height:360px;"></div>
   </div>
 
-  <div class="report-actions">
+  <div class="legacy-report-actions report-actions">
     <button class="print-btn" onclick="window.print()">PRINT</button>
     <button class="download-btn" onclick="downloadReport()">DOWNLOAD</button>
   </div>
@@ -2839,63 +3091,215 @@ tr:nth-child(even) { background-color: #f8fbff; }
       var graphXTickValues = ${JSON.stringify(GRAPH_X_TICK_VALUES)};
       var graphContainer = document.getElementById('report-graph');
       var graphReady = Promise.resolve();
+      var graphHeight = 320;
 
-      if (currents.length && voltages.length) {
-         var trace = { x: currents, y: voltages, type: 'scatter', mode: 'lines+markers', name: graphTitle, line: { color: '#3498db' } };
+      function notifyParentLayout() {
+        var height = Math.max(
+          document.documentElement ? document.documentElement.scrollHeight : 0,
+          document.body ? document.body.scrollHeight : 0
+        );
+        try {
+          window.parent.postMessage({ type: 'vlab:simulation_report_layout_ready', height: height }, '*');
+        } catch (error) {}
+        try {
+          if (window.opener && window.opener !== window) {
+            window.opener.postMessage({ type: 'vlab:simulation_report_layout_ready', height: height }, '*');
+          }
+        } catch (error) {}
+      }
+
+      if (currents.length && voltages.length && window.Plotly) {
+        var trace = {
+          x: currents,
+          y: voltages,
+          type: 'scatter',
+          mode: 'lines+markers',
+          name: graphTitle,
+          line: { color: '#2563eb', width: 3 },
+          marker: { color: '#111827', size: 8 }
+        };
         var layout = {
           title: { text: '<b>' + graphTitle + '</b>' },
           xaxis: {
             title: { text: '<b>' + graphXAxisLabel + '</b>', standoff: 12 },
             automargin: true,
             tickmode: 'array',
-            tickvals: graphXTickValues
+            tickvals: graphXTickValues,
+            gridcolor: 'rgba(17, 24, 39, 0.08)',
+            zerolinecolor: 'rgba(17, 24, 39, 0.15)'
           },
-          yaxis: { title: { text: '<b>' + graphYAxisLabel + '</b>', standoff: 12 }, automargin: true },
-          margin: { t: 70, r: 30, l: 80, b: 70 }
+          yaxis: {
+            title: { text: '<b>' + graphYAxisLabel + '</b>', standoff: 12 },
+            automargin: true,
+            gridcolor: 'rgba(17, 24, 39, 0.08)',
+            zerolinecolor: 'rgba(17, 24, 39, 0.15)'
+          },
+          paper_bgcolor: '#ffffff',
+          plot_bgcolor: '#ffffff',
+          margin: { t: 70, r: 24, l: 70, b: 64 }
         };
-        graphReady = Plotly.newPlot('report-graph', [trace], layout, {displaylogo:false}).then(function(gd) {
-          return Plotly.toImage(gd, {format:'png', width: gd.offsetWidth || 900, height: gd.offsetHeight || 360});
+        graphReady = Plotly.newPlot('report-graph', [trace], layout, {
+          displaylogo: false,
+          responsive: true
+        }).then(function(gd) {
+          var plotWidth = Math.max(720, Math.round(graphContainer.clientWidth || gd.offsetWidth || 720));
+          return Plotly.toImage(gd, {
+            format: 'png',
+            width: plotWidth * 2,
+            height: graphHeight * 2
+          });
         }).then(function(imgData) {
           var img = new Image();
           img.src = imgData;
           img.alt = graphTitle;
-          img.style.maxWidth = '100%';
+          img.style.width = '100%';
           img.style.height = 'auto';
           graphContainer.innerHTML = '';
           graphContainer.appendChild(img);
+          notifyParentLayout();
         }).catch(function() {
-          // keep the interactive graph if snapshot fails
+          notifyParentLayout();
         });
       } else {
-        graphContainer.innerHTML = '<em>No readings available to plot.</em>';
+        graphContainer.innerHTML = '<div class="report-empty">No readings available to plot.</div>';
+        notifyParentLayout();
       }
 
-      window.reportGraphReady = graphReady;
+      window.reportGraphReady = graphReady.then(function() {
+        notifyParentLayout();
+      }, function() {
+        notifyParentLayout();
+      });
+      window.addEventListener('load', notifyParentLayout);
+      window.addEventListener('resize', notifyParentLayout);
     })();
-    function ensureHtml2Pdf() {
+    function ensureScript(url, readyCheck) {
       return new Promise(function(resolve, reject) {
-        if (window.html2pdf) return resolve();
+        if (readyCheck()) {
+          resolve();
+          return;
+        }
+        var existing = Array.prototype.slice.call(document.scripts).find(function(script) {
+          return script.src === url;
+        });
+        if (existing) {
+          existing.addEventListener('load', function() { resolve(); }, { once: true });
+          existing.addEventListener('error', function() { reject(new Error('Failed to load ' + url)); }, { once: true });
+          return;
+        }
         var script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+        script.src = url;
+        script.async = true;
         script.onload = resolve;
-        script.onerror = reject;
+        script.onerror = function() { reject(new Error('Failed to load ' + url)); };
         document.head.appendChild(script);
       });
     }
+    function ensurePdfTools() {
+      return Promise.all([
+        ensureScript(
+          'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+          function() { return typeof window.html2canvas === 'function'; }
+        ),
+        ensureScript(
+          'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+          function() { return !!(window.jspdf && window.jspdf.jsPDF); }
+        )
+      ]);
+    }
+    function waitForExportAssets(timeoutMs) {
+      var fontReady =
+        document.fonts && typeof document.fonts.ready.then === 'function'
+          ? document.fonts.ready.catch(function() {})
+          : Promise.resolve();
+      var pendingImages = Array.prototype.slice.call(document.images || [])
+        .filter(function(img) { return !img.complete; })
+        .map(function(img) {
+          return new Promise(function(resolve) {
+            var done = function() { resolve(); };
+            img.addEventListener('load', done, { once: true });
+            img.addEventListener('error', done, { once: true });
+          });
+        });
+      return Promise.race([
+        Promise.all([fontReady, Promise.all(pendingImages)]),
+        new Promise(function(resolve) { setTimeout(resolve, timeoutMs || 1800); })
+      ]);
+    }
+    function addCanvasFittedSinglePage(pdf, canvas, margin) {
+      if (!pdf || !canvas || !canvas.width || !canvas.height) return;
+      var pageWidth = pdf.internal.pageSize.getWidth();
+      var pageHeight = pdf.internal.pageSize.getHeight();
+      var usableWidth = pageWidth - margin * 2;
+      var usableHeight = pageHeight - margin * 2;
+      var scale = Math.min(usableWidth / canvas.width, usableHeight / canvas.height);
+      var renderWidth = canvas.width * scale;
+      var renderHeight = canvas.height * scale;
+      var x = margin + (usableWidth - renderWidth) / 2;
+      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', x, margin, renderWidth, renderHeight, undefined, 'SLOW');
+    }
+    function captureExportBlocks() {
+      var captureScale = Math.min(4, Math.max(3, window.devicePixelRatio || 3));
+      var captureOptions = {
+        scale: captureScale,
+        useCORS: true,
+        allowTaint: true,
+        scrollX: 0,
+        scrollY: 0,
+        backgroundColor: '#ffffff'
+      };
+      var blocks = Array.prototype.slice.call(document.querySelectorAll('[data-progress-export-block]'));
+      if (!blocks.length) {
+        var root = document.getElementById('report-root') || document.body;
+        blocks = [root];
+      }
+      return blocks.reduce(function(chain, block) {
+        return chain.then(function(canvases) {
+          return window.html2canvas(block, captureOptions).then(function(canvas) {
+            if (canvas && canvas.width && canvas.height) {
+              canvases.push({
+                canvas: canvas,
+                orientation: block.getAttribute('data-progress-export-block') === 'results' ? 'landscape' : 'portrait'
+              });
+            }
+            return canvases;
+          });
+        });
+      }, Promise.resolve([]));
+    }
     function downloadReport() {
       var waitForGraph = window.reportGraphReady || Promise.resolve();
-      waitForGraph.then(ensureHtml2Pdf).then(function() {
-        var element = document.getElementById('report-root') || document.body;
-        var opts = {
-          margin: [0.3, 0.3, 0.3, 0.3],
-          filename: 'simulation-report.pdf',
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
-          jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-        };
-        return window.html2pdf().set(opts).from(element).save();
+      var button = document.querySelector('[data-report-download]');
+      var originalLabel = button ? button.textContent : '';
+      if (button) {
+        button.disabled = true;
+        button.textContent = 'Preparing PDF...';
+      }
+      waitForGraph
+      .then(function() { return ensurePdfTools(); })
+      .then(function() { return waitForExportAssets(1800); })
+      .then(function() { return captureExportBlocks(); })
+      .then(function(blocks) {
+        var jsPDF = window.jspdf && window.jspdf.jsPDF;
+        if (typeof jsPDF !== 'function') throw new Error('PDF library missing');
+        if (!blocks.length) throw new Error('Nothing to export');
+        var exportMargin = 18;
+        var firstOrientation = blocks[0].orientation === 'landscape' ? 'landscape' : 'portrait';
+        var pdf = new jsPDF({ unit: 'pt', format: 'a4', orientation: firstOrientation });
+        blocks.forEach(function(block, index) {
+          if (index > 0) {
+            pdf.addPage('a4', block.orientation === 'landscape' ? 'landscape' : 'portrait');
+          }
+          addCanvasFittedSinglePage(pdf, block.canvas, exportMargin);
+        });
+        pdf.save('simulation-report.pdf');
       }).catch(function() {
         alert('Unable to download the report automatically. Please use your browser\\'s Save as PDF option.');
+      }).finally(function() {
+        if (button) {
+          button.disabled = false;
+          button.textContent = originalLabel;
+        }
       });
     }
 </script>

@@ -507,6 +507,51 @@
       window.location.href = "aim.html";
     }
 
+    function formatDurationText(ms) {
+      const totalSeconds = Math.max(0, Math.floor((Number(ms) || 0) / 1000));
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      const parts = [];
+      if (hours > 0) parts.push(`${hours} hr`);
+      parts.push(`${minutes} min`);
+      parts.push(`${seconds} sec`);
+      return parts.join(" ");
+    }
+
+    function getFrameDocumentHeight(doc) {
+      if (!doc) return 0;
+      const body = doc.body;
+      const docEl = doc.documentElement;
+      return Math.max(
+        body?.scrollHeight || 0,
+        body?.offsetHeight || 0,
+        body?.clientHeight || 0,
+        docEl?.scrollHeight || 0,
+        docEl?.offsetHeight || 0,
+        docEl?.clientHeight || 0,
+        540
+      );
+    }
+
+    function syncSimulationFrameHeight(frameEl, explicitHeight = null) {
+      if (!frameEl || frameEl.classList.contains("hidden")) return;
+      try {
+        const measuredHeight = explicitHeight || getFrameDocumentHeight(frameEl.contentDocument);
+        if (!measuredHeight) return;
+        const targetHeight = Math.max(540, Math.ceil(measuredHeight) + 12);
+        frameEl.style.height = `${targetHeight}px`;
+        frameEl.style.minHeight = `${targetHeight}px`;
+      } catch {}
+    }
+
+    function queueSimulationFrameHeightSync(frameEl) {
+      if (!frameEl) return;
+      [0, 120, 360, 900, 1600].forEach((delay) => {
+        window.setTimeout(() => syncSimulationFrameHeight(frameEl), delay);
+      });
+    }
+
     // ---- Guard: tracker must exist
     if (!window.VLProgress) {
       setReportContainerVisible(false);
@@ -580,7 +625,7 @@
           </section>
           <section class="report-section">
             <h2 class="report-section-title">Total Duration</h2>
-            <p class="report-duration">${VLProgress.formatMs(totalMs)}</p>
+            <p class="report-duration">${formatDurationText(totalMs)}</p>
           </section>
         </div>
 
@@ -724,6 +769,10 @@
       status.textContent = upd ? `Simulation report attached (updated: ${upd}).` : "Simulation report attached.";
 
       try {
+        iframe.addEventListener("load", () => {
+          syncSimulationFrameHeight(iframe);
+          queueSimulationFrameHeightSync(iframe);
+        }, { once: true });
         iframe.srcdoc = report.html;
         iframe.classList.remove("hidden");
       } catch {
@@ -766,12 +815,34 @@
       });
     }
 
+    async function waitForFrameAssets(frameEl, timeoutMs = 1800) {
+      const doc = frameEl?.contentDocument;
+      if (!doc) return;
+
+      const fontReady =
+        doc.fonts && typeof doc.fonts.ready?.then === "function"
+          ? doc.fonts.ready.catch(() => {})
+          : Promise.resolve();
+
+      const pendingImages = Array.from(doc.images || [])
+        .filter((img) => !img.complete)
+        .map((img) => new Promise((resolve) => {
+          const done = () => resolve();
+          img.addEventListener("load", done, { once: true });
+          img.addEventListener("error", done, { once: true });
+        }));
+
+      await Promise.race([Promise.all([fontReady, Promise.all(pendingImages)]), sleep(timeoutMs)]);
+    }
+
     async function captureSimulationFrameSnapshot(frameEl) {
       if (!frameEl) return null;
       if (typeof html2canvas !== "function") return null;
 
       await waitForIframeReady(frameEl);
+      await waitForFrameAssets(frameEl);
       await sleep(150);
+      syncSimulationFrameHeight(frameEl);
 
       const doc = frameEl.contentDocument;
       const body = doc?.body;
@@ -780,7 +851,7 @@
       const docEl = doc.documentElement;
 
       const canvas = await html2canvas(body, {
-        scale: Math.min(2, window.devicePixelRatio || 1.5),
+        scale: Math.min(4, Math.max(3, window.devicePixelRatio || 3)),
         useCORS: true,
         allowTaint: true,
         scrollX: 0,
@@ -797,6 +868,40 @@
       img.style.width = "100%";
       img.loading = "lazy";
       return img;
+    }
+
+    async function captureSimulationReportBlockCanvases(frameEl, captureOptions) {
+      if (!frameEl || typeof html2canvas !== "function") return [];
+
+      await waitForIframeReady(frameEl);
+      await waitForFrameAssets(frameEl);
+      await sleep(120);
+      syncSimulationFrameHeight(frameEl);
+
+      const doc = frameEl.contentDocument;
+      const docEl = doc?.documentElement;
+      if (!doc) return [];
+
+      const blocks = Array.from(doc.querySelectorAll("[data-progress-export-block]"));
+      if (!blocks.length) return [];
+
+      const canvases = [];
+      for (const block of blocks) {
+        const canvas = await html2canvas(block, {
+          ...captureOptions,
+          windowWidth: docEl?.scrollWidth || undefined,
+          windowHeight: docEl?.scrollHeight || undefined,
+          backgroundColor: "#ffffff"
+        });
+        if (canvas?.width && canvas?.height) {
+          canvases.push({
+            canvas,
+            orientation: block.dataset.progressExportBlock === "results" ? "landscape" : "portrait"
+          });
+        }
+      }
+
+      return canvases;
     }
 
     function expandSimulationFrameForPrint() {
@@ -903,7 +1008,7 @@
       const renderHeight = canvas.height * scale;
       const x = margin + (usableWidth - renderWidth) / 2;
       const y = margin;
-      pdf.addImage(canvas.toDataURL("image/png"), "PNG", x, y, renderWidth, renderHeight, undefined, "FAST");
+      pdf.addImage(canvas.toDataURL("image/png"), "PNG", x, y, renderWidth, renderHeight, undefined, "SLOW");
     }
 
     function appendCanvasPaged(pdf, canvas, { margin = 24, startNewPage = true } = {}) {
@@ -943,7 +1048,7 @@
           usableWidth,
           renderHeight,
           undefined,
-          "FAST"
+          "SLOW"
         );
 
         sourceY += thisSliceHeight;
@@ -1065,6 +1170,14 @@
       clearSimulationPrintSnapshot();
       restoreSimulationFrameAfterPrint();
     });
+    window.addEventListener("message", (event) => {
+      const frameEl = document.getElementById("simulationReportFrame");
+      if (!frameEl || event.source !== frameEl.contentWindow) return;
+      if (event.data?.type !== "vlab:simulation_report_layout_ready") return;
+      const postedHeight = Number(event.data.height);
+      syncSimulationFrameHeight(frameEl, Number.isFinite(postedHeight) ? postedHeight : null);
+      queueSimulationFrameHeightSync(frameEl);
+    });
 
     // Legacy export (kept for reference)
     async function downloadReport() {
@@ -1142,7 +1255,8 @@
         const latestSimReport = getSimulationReportData();
         if (latestSimReport) currentSimulationReport = latestSimReport;
 
-        const captureScale = Math.min(2, window.devicePixelRatio || 1.5);
+        const captureScale = Math.min(4, Math.max(3, window.devicePixelRatio || 3));
+        const exportMargin = 18;
         const captureOptions = {
           scale: captureScale,
           useCORS: true,
@@ -1159,11 +1273,22 @@
         exportCleanup = exportContext.cleanup;
 
         const firstCanvas = await html2canvas(exportContext.firstNode, captureOptions);
-        const simulationCanvas = await html2canvas(exportContext.simulationNode, captureOptions);
+        const simulationBlockCanvases = await captureSimulationReportBlockCanvases(
+          document.getElementById("simulationReportFrame"),
+          captureOptions
+        );
 
         const pdf = new jsPDF({ unit: "pt", format: "a4", orientation: "portrait" });
-        addCanvasFittedSinglePage(pdf, firstCanvas, 24);
-        appendCanvasPaged(pdf, simulationCanvas, { margin: 24, startNewPage: true });
+        addCanvasFittedSinglePage(pdf, firstCanvas, exportMargin);
+        if (simulationBlockCanvases.length) {
+          simulationBlockCanvases.forEach(({ canvas, orientation }) => {
+            pdf.addPage("a4", orientation === "landscape" ? "landscape" : "portrait");
+            addCanvasFittedSinglePage(pdf, canvas, exportMargin);
+          });
+        } else {
+          const simulationCanvas = await html2canvas(exportContext.simulationNode, captureOptions);
+          appendCanvasPaged(pdf, simulationCanvas, { margin: exportMargin, startNewPage: true });
+        }
 
         pdf.save("progress-report.pdf");
       } catch (error) {
