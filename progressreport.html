@@ -870,6 +870,72 @@
       return img;
     }
 
+    async function captureFrameNodesInDetachedShell(frameEl, nodes, captureOptions) {
+      const doc = frameEl?.contentDocument;
+      const docEl = doc?.documentElement;
+      const body = doc?.body;
+      const sourceNodes = Array.isArray(nodes) ? nodes.filter(Boolean) : [];
+      if (!doc || !docEl || !body || !sourceNodes.length || typeof html2canvas !== "function") return [];
+
+      const captureWidth = Math.max(
+        docEl.scrollWidth || 0,
+        body.scrollWidth || 0,
+        ...sourceNodes.map((node) => Math.max(node.scrollWidth || 0, node.offsetWidth || 0, node.clientWidth || 0)),
+        960
+      );
+
+      const exportShell = doc.createElement("div");
+      exportShell.style.position = "absolute";
+      exportShell.style.left = "-99999px";
+      exportShell.style.top = "0";
+      exportShell.style.width = `${captureWidth}px`;
+      exportShell.style.maxWidth = "none";
+      exportShell.style.background = "#ffffff";
+      exportShell.style.padding = "0";
+      exportShell.style.margin = "0";
+      exportShell.style.display = "block";
+      exportShell.style.zIndex = "-1";
+
+      const clones = sourceNodes.map((node) => {
+        const clone = node.cloneNode(true);
+        exportShell.appendChild(clone);
+        return clone;
+      });
+
+      body.appendChild(exportShell);
+      await sleep(80);
+
+      const canvases = [];
+      try {
+        for (const clone of clones) {
+          const canvas = await html2canvas(clone, {
+            ...captureOptions,
+            windowWidth: Math.max(
+              captureWidth,
+              clone.scrollWidth || 0,
+              clone.offsetWidth || 0,
+              clone.clientWidth || 0
+            ),
+            windowHeight: Math.max(
+              docEl.scrollHeight || 0,
+              body.scrollHeight || 0,
+              clone.scrollHeight || 0,
+              clone.offsetHeight || 0,
+              clone.clientHeight || 0
+            ),
+            backgroundColor: "#ffffff"
+          });
+          if (canvas?.width && canvas?.height) {
+            canvases.push(canvas);
+          }
+        }
+      } finally {
+        exportShell.remove();
+      }
+
+      return canvases;
+    }
+
     async function captureSimulationReportBlockCanvases(frameEl, captureOptions) {
       if (!frameEl || typeof html2canvas !== "function") return [];
 
@@ -883,22 +949,137 @@
       if (!doc) return [];
 
       const blocks = Array.from(doc.querySelectorAll("[data-progress-export-block]"));
-      if (!blocks.length) return [];
+      if (!blocks.length) {
+        const reportPages = Array.from(doc.querySelectorAll(".report-page"));
+        if (reportPages.length) {
+          const canvases = await captureFrameNodesInDetachedShell(frameEl, reportPages, captureOptions);
+          return canvases.map((canvas) => ({ canvas, orientation: "portrait" }));
+        }
+        return captureLegacySimulationReportCanvases(frameEl, captureOptions);
+      }
+
+      const canvases = await captureFrameNodesInDetachedShell(frameEl, blocks, captureOptions);
+      return canvases.map((canvas) => ({
+        canvas,
+        orientation: "portrait"
+      }));
+    }
+
+    function ensureLegacySimulationExportStyles(doc) {
+      if (!doc || doc.getElementById("legacySimulationExportStyles")) return;
+
+      const style = doc.createElement("style");
+      style.id = "legacySimulationExportStyles";
+      style.textContent = `
+        .legacy-progress-export-shell {
+          position: absolute;
+          left: -99999px;
+          top: 0;
+          background: #ffffff;
+          z-index: -1;
+        }
+        .legacy-progress-export-card {
+          background: #ffffff;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+        .legacy-progress-export-card > .section {
+          width: 100%;
+          margin: 0;
+        }
+        .legacy-progress-export-card > .section.graph {
+          margin-top: 0;
+        }
+        .legacy-progress-export-card table {
+          width: 100%;
+        }
+        .legacy-progress-export-card #report-graph,
+        .legacy-progress-export-card #legacy-report-graph {
+          min-height: 320px;
+        }
+      `;
+
+      (doc.head || doc.body || doc.documentElement).appendChild(style);
+    }
+
+    async function captureLegacySimulationReportCanvases(frameEl, captureOptions) {
+      const doc = frameEl?.contentDocument;
+      const docEl = doc?.documentElement;
+      const root = doc?.getElementById("report-root") || doc?.body;
+      const body = doc?.body;
+      if (!doc || !docEl || !root || !body) return [];
+
+      const rootChildren = Array.from(root.children || []);
+      const headerRow = rootChildren.find((el) => el.classList?.contains("header-row")) || null;
+      const sections = rootChildren.filter((el) => el.classList?.contains("section"));
+      const tableSection = sections.find((el) => !!el.querySelector("table")) || null;
+      const graphSection =
+        sections.find((el) => el.classList?.contains("graph")) ||
+        sections.find((el) => !!el.querySelector("#report-graph, #legacy-report-graph")) ||
+        null;
+
+      if (!tableSection || !graphSection) return [];
+
+      ensureLegacySimulationExportStyles(doc);
+
+      const exportShell = doc.createElement("div");
+      exportShell.className = "legacy-progress-export-shell";
+      exportShell.setAttribute("data-legacy-progress-export", "true");
+      exportShell.style.width = `${Math.max(root.scrollWidth || 0, docEl.clientWidth || 0, 920)}px`;
+
+      const overviewSources = [];
+      if (headerRow) overviewSources.push(headerRow);
+      sections.forEach((section) => {
+        if (section !== tableSection && section !== graphSection) {
+          overviewSources.push(section);
+        }
+      });
+
+      let overviewCard = null;
+      if (overviewSources.length) {
+        overviewCard = doc.createElement("section");
+        overviewCard.className = "legacy-progress-export-card";
+        overviewSources.forEach((node) => {
+          overviewCard.appendChild(node.cloneNode(true));
+        });
+        exportShell.appendChild(overviewCard);
+      }
+
+      const resultsCard = doc.createElement("section");
+      resultsCard.className = "legacy-progress-export-card";
+      resultsCard.appendChild(tableSection.cloneNode(true));
+      resultsCard.appendChild(graphSection.cloneNode(true));
+      exportShell.appendChild(resultsCard);
+
+      body.appendChild(exportShell);
+      await sleep(80);
 
       const canvases = [];
-      for (const block of blocks) {
-        const canvas = await html2canvas(block, {
+      try {
+        if (overviewCard) {
+          const overviewCanvas = await html2canvas(overviewCard, {
+            ...captureOptions,
+            windowWidth: docEl.scrollWidth || undefined,
+            windowHeight: docEl.scrollHeight || undefined,
+            backgroundColor: "#ffffff"
+          });
+          if (overviewCanvas?.width && overviewCanvas?.height) {
+            canvases.push({ canvas: overviewCanvas, orientation: "portrait" });
+          }
+        }
+
+        const resultsCanvas = await html2canvas(resultsCard, {
           ...captureOptions,
-          windowWidth: docEl?.scrollWidth || undefined,
-          windowHeight: docEl?.scrollHeight || undefined,
+          windowWidth: docEl.scrollWidth || undefined,
+          windowHeight: docEl.scrollHeight || undefined,
           backgroundColor: "#ffffff"
         });
-        if (canvas?.width && canvas?.height) {
-          canvases.push({
-            canvas,
-            orientation: block.dataset.progressExportBlock === "results" ? "landscape" : "portrait"
-          });
+        if (resultsCanvas?.width && resultsCanvas?.height) {
+          canvases.push({ canvas: resultsCanvas, orientation: "portrait" });
         }
+      } finally {
+        exportShell.remove();
       }
 
       return canvases;
