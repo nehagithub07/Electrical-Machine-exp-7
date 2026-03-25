@@ -31,6 +31,48 @@ if (typeof window !== "undefined" && "speechSynthesis" in window) {
 }
 resetSpeakButtonUI();
 
+(function initZoomScrollToggle() {
+  const body = document.body;
+  if (!body) return;
+
+  const ZOOM_SCROLL_THRESHOLD = 1.25;
+  let pendingRaf = null;
+  let baselineZoom = null;
+
+  function getCurrentZoomLevel() {
+    const dpr = window.devicePixelRatio || 1;
+    const viewportScale =
+      window.visualViewport && typeof window.visualViewport.scale === "number"
+        ? window.visualViewport.scale
+        : 1;
+    return dpr * viewportScale;
+  }
+
+  function applyZoomClass() {
+    pendingRaf = null;
+    const currentZoom = getCurrentZoomLevel();
+    if (!Number.isFinite(currentZoom) || currentZoom <= 0) {
+      body.classList.remove("zoom-scroll-active");
+      return;
+    }
+
+    baselineZoom = baselineZoom === null ? currentZoom : Math.min(baselineZoom, currentZoom);
+    const relativeZoom = currentZoom / baselineZoom;
+    body.classList.toggle("zoom-scroll-active", relativeZoom >= ZOOM_SCROLL_THRESHOLD);
+  }
+
+  function scheduleZoomClassUpdate() {
+    if (pendingRaf !== null) return;
+    pendingRaf = window.requestAnimationFrame(applyZoomClass);
+  }
+
+  applyZoomClass();
+  window.addEventListener("resize", scheduleZoomClassUpdate, { passive: true });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", scheduleZoomClassUpdate, { passive: true });
+  }
+})();
+
 function updateRotorSpin() {
   if (!generatorRotor) return;
   const shouldSpin = connectionsVerified && mcbOn && starterMoved;
