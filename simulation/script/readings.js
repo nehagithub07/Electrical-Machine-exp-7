@@ -644,10 +644,24 @@ tr:nth-child(even) { background-color: #f8fbff; }
   <div class="section">
     <h2>Summary</h2>
     <h3>Aim</h3>
-    <p style="text-align:justify;">To study the external characteristic of a DC shunt generator by varying the lamp load, measuring the terminal voltage and load current, and plotting the terminal voltage versus load current (V–I) curve.</p>
+    <p style="text-align:justify;">To study the magnetisation characteristics of DC shunt generator and draw the graph between the generated emf and field current.</p>
 
-    <h3>Simulation Summary</h3>
-    <p style="text-align:justify;">Connections were completed as instructed, supply was switched ON, lamp load was varied, and the corresponding load current and terminal voltage readings were recorded, and a graph was generated between terminal voltage and load current.</p>
+    <h3>Theory</h3>
+    <p style="text-align:justify;"><strong>Introduction</strong><br>A DC shunt generator converts mechanical energy into electrical energy by electromagnetic induction. The shunt field winding is connected in parallel with the armature and carries field current to produce magnetic flux.</p>
+
+    <p style="text-align:justify;"><strong>Magnetisation Characteristic (Open Circuit Characteristic - OCC)</strong><br>At constant speed and no-load condition, OCC shows the relation between generated EMF and field current. It is obtained by gradually changing field current and noting the generated terminal voltage.</p>
+
+    <p style="text-align:justify;"><strong>Curve Axes:</strong> X-axis - Field Current (If), Y-axis - Generated EMF (E).</p>
+
+    <p style="text-align:justify;"><strong>Residual Magnetism</strong><br>At zero field current, a small voltage appears due to residual magnetism. This provides initial flux for voltage build-up; without residual magnetism, self-excitation will not start.</p>
+
+    <p style="text-align:justify;"><strong>Nature of the Curve</strong><br>Initially, EMF rises almost linearly with field current. Near the knee point, the rate of rise reduces. After that, magnetic saturation causes only a small EMF increase for further increase in field current.</p>
+
+    <p style="text-align:justify;"><strong>EMF Equation</strong><br>E = (P phi Z N) / (60 A), where P = poles, phi = flux per pole, Z = armature conductors, N = speed (RPM), and A = parallel paths.</p>
+
+    <p style="text-align:justify;">Since speed is kept constant in this experiment, generated EMF mainly changes with flux, which depends on field current.</p>
+
+    <p style="text-align:justify;"><strong>Importance and Applications</strong><br>The OCC helps in understanding voltage build-up, identifying magnetic saturation, and predicting DC generator performance during design and operation.</p>
 
     <h3>Components and key Parameters</h3>
     <ul class="two-column-list">
@@ -1270,10 +1284,24 @@ tr:nth-child(even) {
       <div class="section">
         <h2>Summary</h2>
         <h3>Aim</h3>
-        <p style="text-align:justify;">To study the magnetisation characteristics of a DC shunt generator by varying the field current, observing the generated EMF, and plotting the open-circuit characteristic curve.</p>
+        <p style="text-align:justify;">To study the magnetisation characteristics of DC shunt generator and draw the graph between the generated emf and field current.</p>
 
-        <h3>Simulation Summary</h3>
-        <p style="text-align:justify;">The circuit connections were completed as per the procedure, the machine was started, the field current was varied using the rheostat, the corresponding generated EMF readings were recorded, and the magnetisation graph was plotted.</p>
+        <h3>Theory</h3>
+        <p style="text-align:justify;"><strong>Introduction</strong><br>A DC shunt generator converts mechanical energy into electrical energy by electromagnetic induction. The shunt field winding is connected in parallel with the armature and carries field current to produce magnetic flux.</p>
+
+        <p style="text-align:justify;"><strong>Magnetisation Characteristic (Open Circuit Characteristic - OCC)</strong><br>At constant speed and no-load condition, OCC shows the relation between generated EMF and field current. It is obtained by gradually changing field current and noting the generated terminal voltage.</p>
+
+        <p style="text-align:justify;"><strong>Curve Axes:</strong> X-axis - Field Current (If), Y-axis - Generated EMF (E).</p>
+
+        <p style="text-align:justify;"><strong>Residual Magnetism</strong><br>At zero field current, a small voltage appears due to residual magnetism. This provides initial flux for voltage build-up; without residual magnetism, self-excitation will not start.</p>
+
+        <p style="text-align:justify;"><strong>Nature of the Curve</strong><br>Initially, EMF rises almost linearly with field current. Near the knee point, the rate of rise reduces. After that, magnetic saturation causes only a small EMF increase for further increase in field current.</p>
+
+        <p style="text-align:justify;"><strong>EMF Equation</strong><br>E = (P phi Z N) / (60 A), where P = poles, phi = flux per pole, Z = armature conductors, N = speed (RPM), and A = parallel paths.</p>
+
+        <p style="text-align:justify;">Since speed is kept constant in this experiment, generated EMF mainly changes with flux, which depends on field current.</p>
+
+        <p style="text-align:justify;"><strong>Importance and Applications</strong><br>The OCC helps in understanding voltage build-up, identifying magnetic saturation, and predicting DC generator performance during design and operation.</p>
 
         <h3>Components and Key Parameters</h3>
         <ul class="two-column-list">
